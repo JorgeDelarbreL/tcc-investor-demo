@@ -558,7 +558,7 @@
   </div>
   <div class="viewer-wrap">
     <div class="viewer-tag">Massing block · <span class="gold" id="viewerLotName">—</span></div>
-    <div class="viewer-hint">Drag to orbit · Scroll to zoom</div>
+    <div class="viewer-hint">Drag to orbit</div>
     <canvas id="canvas3d"></canvas>
   </div>
 </section>
@@ -764,6 +764,9 @@ function initThree(){
   controls.minDistance = 40;
   controls.maxDistance = 500;
   controls.maxPolarAngle = Math.PI / 2.1;
+  // wheel scroll is reserved for page scroll, not camera zoom, so it can't
+  // hijack the page scroll and blow the block up to fill the viewport
+  controls.enableZoom = false;
 
   // lighting
   const ambient = new THREE.AmbientLight(0xffffff, 0.55);
@@ -810,8 +813,13 @@ function onResize(){
 }
 
 function updateMassing(lot, levels, cusUtilPct){
+  if (!massingBlock) return; // 3D viewer didn't initialize (e.g. CDN unreachable)
+
   const m = computeMetrics(lot, levels, cusUtilPct);
-  const footprintSide = Math.sqrt(m.footprint);
+  // footprint stat itself is fixed by COS; CUS utilization is visualized as how
+  // much of that footprint is actually built out, so both sliders move the block
+  const visualFootprint = m.footprint * (cusUtilPct / 100);
+  const footprintSide = Math.sqrt(visualFootprint);
 
   // scale footprint into a sane viewport size, keep proportional height
   const SCALE = 0.6;
@@ -920,7 +928,14 @@ cusSlider.addEventListener('input', onSlidersChange);
 /* =========================================================
    INIT
 ========================================================= */
-initThree();
+// the 3D massing viewer depends on third-party CDNs (three.js, OrbitControls);
+// if either fails to load, the rest of the page (lot selector, params,
+// calculator, AI render) must still work
+try {
+  initThree();
+} catch (e) {
+  console.error('3D viewer failed to initialize:', e);
+}
 onLotChange();
 </script>
 </body>
