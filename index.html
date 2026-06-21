@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tulum Country Club — Institutional Investment Opportunities</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A0A;
+    --surface:#111111;
+    --surface-2:#161616;
+    --gold:#C9A84C;
+    --gold-dim:rgba(201,168,76,0.35);
+    --text:#F2F2F2;
+    --text-dim:#888888;
+    --border:#222222;
+    --ease:300ms ease;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    font-weight:300;
+    overflow-x:hidden;
+  }
+
+  h1,h2,h3,.serif{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:300;
+  }
+
+  .gold{color:var(--gold);}
+  .dim{color:var(--text-dim);}
+
+  .divider{
+    width:40px;
+    height:1px;
+    background:var(--gold);
+    margin:24px auto;
+  }
+  .divider.left{margin:24px 0;}
+
+  .section{
+    padding:120px 8vw;
+    max-width:1440px;
+    margin:0 auto;
+  }
+
+  .label-sm{
+    font-size:11px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    font-weight:400;
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:100;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:24px 8vw;
+    background:linear-gradient(to bottom, rgba(10,10,10,0.95), rgba(10,10,10,0));
+    backdrop-filter:blur(2px);
+  }
+  nav .nav-logo{
+    font-family:'Cormorant Garamond',serif;
+    font-size:18px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+  }
+  nav .nav-logo span{color:var(--gold);}
+  nav .nav-tag{
+    font-size:11px;
+    letter-spacing:0.12em;
+    color:var(--text-dim);
+    text-transform:uppercase;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    position:relative;
+    padding:0 6vw;
+  }
+  .hero-logo{
+    font-size:15px;
+    letter-spacing:0.3em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    margin-bottom:28px;
+  }
+  .hero-logo .gold{color:var(--gold);}
+  .hero h1{
+    font-size:clamp(34px,5.4vw,64px);
+    line-height:1.18;
+    font-weight:300;
+    max-width:980px;
+  }
+  .hero .subtitle{
+    margin-top:28px;
+    font-size:16px;
+    font-weight:300;
+    color:var(--text-dim);
+    max-width:560px;
+    line-height:1.7;
+  }
+  .scroll-indicator{
+    position:absolute;
+    bottom:48px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    color:var(--text-dim);
+    font-size:10px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+  }
+  .scroll-indicator .line{
+    width:1px;
+    height:34px;
+    background:linear-gradient(to bottom, var(--gold), transparent);
+    animation:scrollPulse 2s infinite ease-in-out;
+  }
+  @keyframes scrollPulse{
+    0%,100%{transform:scaleY(0.4); opacity:0.4;}
+    50%{transform:scaleY(1); opacity:1;}
+  }
+
+  /* ---------- SECTION HEADER ---------- */
+  .section-head{
+    margin-bottom:64px;
+  }
+  .section-head .label-sm{margin-bottom:14px;}
+  .section-head h2{
+    font-size:clamp(26px,3.2vw,38px);
+    font-weight:300;
+  }
+
+  /* ---------- LOT SELECTOR ---------- */
+  .lot-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:24px;
+  }
+  .lot-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    padding:32px 28px;
+    cursor:pointer;
+    transition:border-color var(--ease), transform var(--ease), background var(--ease);
+    position:relative;
+  }
+  .lot-card:hover{
+    border-color:#3a3a3a;
+    transform:translateY(-4px);
+  }
+  .lot-card.active{
+    border-color:var(--gold);
+    background:var(--surface-2);
+  }
+  .lot-card .lot-index{
+    font-size:11px;
+    letter-spacing:0.16em;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    margin-bottom:18px;
+  }
+  .lot-card.active .lot-index{color:var(--gold);}
+  .lot-card h3{
+    font-size:26px;
+    font-weight:300;
+    margin-bottom:4px;
+  }
+  .lot-card .lot-sub{
+    font-size:13px;
+    color:var(--text-dim);
+    margin-bottom:22px;
+  }
+  .lot-card .lot-stats{
+    display:flex;
+    justify-content:space-between;
+    border-top:1px solid var(--border);
+    padding-top:18px;
+    margin-bottom:18px;
+  }
+  .lot-card .lot-stats div{display:flex; flex-direction:column; gap:6px;}
+  .lot-card .lot-stats .v{
+    font-size:18px;
+    color:var(--text);
+    font-weight:400;
+  }
+  .lot-card.active .lot-stats .v{color:var(--gold);}
+  .lot-card .lot-stats .l{
+    font-size:10px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+  }
+  .lot-card .lot-context{
+    font-size:13px;
+    line-height:1.6;
+    color:var(--text-dim);
+  }
+
+  /* ---------- PARAMETERS PANEL ---------- */
+  .params-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:80px;
+  }
+  .params-table{
+    border-top:1px solid var(--border);
+  }
+  .params-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    padding:18px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .params-row .p-label{
+    font-size:13px;
+    color:var(--text-dim);
+    letter-spacing:0.04em;
+  }
+  .params-row .p-value{
+    font-family:'Cormorant Garamond',serif;
+    font-size:24px;
+    color:var(--gold);
+    font-weight:500;
+  }
+  .params-row .p-value.plain{color:var(--text); font-weight:300;}
+
+  .sliders-block{display:flex; flex-direction:column; gap:48px;}
+  .slider-unit .slider-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:18px;
+  }
+  .slider-unit .slider-head .name{
+    font-size:13px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+  }
+  .slider-unit .slider-head .val{
+    font-family:'Cormorant Garamond',serif;
+    font-size:22px;
+    color:var(--gold);
+  }
+  input[type="range"]{
+    -webkit-appearance:none;
+    width:100%;
+    height:1px;
+    background:var(--border);
+    outline:none;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:var(--gold);
+    cursor:pointer;
+    transition:transform var(--ease);
+    box-shadow:0 0 0 4px rgba(201,168,76,0.12);
+  }
+  input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.2);}
+  input[type="range"]::-moz-range-thumb{
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:var(--gold);
+    border:none;
+    cursor:pointer;
+  }
+
+  /* ---------- CALCULATOR ---------- */
+  .calc-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:1px;
+    background:var(--border);
+    border:1px solid var(--border);
+  }
+  .calc-card{
+    background:var(--surface);
+    padding:30px 24px;
+    transition:background var(--ease);
+  }
+  .calc-card .c-label{
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    margin-bottom:16px;
+    line-height:1.5;
+    min-height:28px;
+  }
+  .calc-card .c-value{
+    font-family:'Cormorant Garamond',serif;
+    font-size:30px;
+    font-weight:500;
+    color:var(--text);
+    transition:opacity var(--ease);
+  }
+  .calc-card.emphasis .c-value{color:var(--gold);}
+  .calc-card .c-unit{
+    font-size:12px;
+    color:var(--text-dim);
+    margin-left:6px;
+  }
+
+  /* ---------- 3D VIEWER ---------- */
+  .viewer-wrap{
+    position:relative;
+    height:560px;
+    background:var(--surface);
+    border:1px solid var(--border);
+  }
+  #canvas3d{width:100%; height:100%; display:block;}
+  .viewer-tag{
+    position:absolute;
+    top:24px; left:28px;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+  }
+  .viewer-tag .gold{color:var(--gold);}
+  .viewer-hint{
+    position:absolute;
+    bottom:24px; left:28px;
+    font-size:11px;
+    color:var(--text-dim);
+    letter-spacing:0.06em;
+  }
+
+  /* ---------- AI RENDER ---------- */
+  .render-cta{
+    text-align:center;
+    padding:60px 0 50px;
+  }
+  .btn-gold{
+    background:transparent;
+    border:1px solid var(--gold);
+    color:var(--gold);
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    padding:18px 46px;
+    cursor:pointer;
+    transition:background var(--ease), color var(--ease);
+  }
+  .btn-gold:hover{
+    background:var(--gold);
+    color:#0A0A0A;
+  }
+  .btn-gold:disabled{
+    opacity:0.5;
+    cursor:not-allowed;
+  }
+
+  .render-stage{
+    min-height:420px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .render-loading{
+    font-size:13px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:22px;
+  }
+  .render-loading .spinner{
+    width:36px; height:36px;
+    border-radius:50%;
+    border:1px solid var(--border);
+    border-top-color:var(--gold);
+    animation:spin 1s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .render-result{
+    width:100%;
+    height:100%;
+    min-height:420px;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(201,168,76,0.07), transparent 55%),
+      linear-gradient(160deg, #161616 0%, #0c0c0c 60%, #0a0a0a 100%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    padding:40px;
+  }
+  .render-result h3{
+    font-size:30px;
+    font-weight:300;
+  }
+  .render-result .r-context{
+    font-size:13px;
+    color:var(--text-dim);
+    max-width:480px;
+    line-height:1.7;
+  }
+  .render-result .r-tag{
+    margin-top:18px;
+    font-size:10px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    border:1px solid var(--border);
+    padding:8px 16px;
+  }
+
+  .render-note{
+    margin-top:18px;
+    font-size:11px;
+    color:var(--text-dim);
+    text-align:center;
+    letter-spacing:0.02em;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    padding:60px 8vw 50px;
+    text-align:center;
+  }
+  footer .f-line{
+    width:40px;
+    height:1px;
+    background:var(--gold);
+    margin:0 auto 28px;
+  }
+  footer .f-brand{
+    font-size:14px;
+    font-weight:300;
+    letter-spacing:0.03em;
+    color:var(--text);
+    margin-bottom:10px;
+  }
+  footer .f-conf{
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:#4a4a4a;
+  }
+
+  @media (max-width:1080px){
+    .lot-grid{grid-template-columns:1fr;}
+    .params-grid{grid-template-columns:1fr; gap:48px;}
+    .calc-grid{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Tulum <span>Country Club</span></div>
+  <div class="nav-tag">Institutional Offering</div>
+</nav>
+
+<!-- ============ SECTION 1 — HERO ============ -->
+<section class="hero">
+  <div class="hero-logo">Tulum <span class="gold">Country Club</span></div>
+  <h1>Three land positions.<br>One irreplaceable location.</h1>
+  <div class="divider"></div>
+  <p class="subtitle">Institutional investment opportunities within PGA Riviera Maya, Tulum Country Club.</p>
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <div class="line"></div>
+  </div>
+</section>
+
+<!-- ============ SECTION 2 — LOT SELECTOR ============ -->
+<section class="section" id="lots">
+  <div class="section-head">
+    <div class="label-sm">Available Positions</div>
+    <h2>Select a Land Parcel</h2>
+  </div>
+  <div class="lot-grid" id="lotGrid"></div>
+</section>
+
+<!-- ============ SECTION 3 — PARAMETERS ============ -->
+<section class="section" id="params">
+  <div class="section-head">
+    <div class="label-sm">Regulatory Framework</div>
+    <h2>Development Parameters</h2>
+  </div>
+  <div class="params-grid">
+    <div class="params-table" id="paramsTable"></div>
+    <div class="sliders-block">
+      <div class="slider-unit">
+        <div class="slider-head">
+          <span class="name">Levels to develop</span>
+          <span class="val" id="levelsVal">1</span>
+        </div>
+        <input type="range" id="levelsSlider" min="1" max="4" value="1" step="1">
+      </div>
+      <div class="slider-unit">
+        <div class="slider-head">
+          <span class="name">CUS utilization</span>
+          <span class="val" id="cusVal">100%</span>
+        </div>
+        <input type="range" id="cusSlider" min="50" max="100" value="100" step="1">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION 4 — CALCULATOR ============ -->
+<section class="section" id="calculator">
+  <div class="section-head">
+    <div class="label-sm">Real-Time Analysis</div>
+    <h2>Development Yield Calculator</h2>
+  </div>
+  <div class="calc-grid" id="calcGrid"></div>
+</section>
+
+<!-- ============ SECTION 5 — 3D VISUALIZATION ============ -->
+<section class="section" id="viewer3d">
+  <div class="section-head">
+    <div class="label-sm">Massing Study</div>
+    <h2>3D Volume Visualization</h2>
+  </div>
+  <div class="viewer-wrap">
+    <div class="viewer-tag">Massing block · <span class="gold" id="viewerLotName">—</span></div>
+    <div class="viewer-hint">Drag to orbit · Scroll to zoom</div>
+    <canvas id="canvas3d"></canvas>
+  </div>
+</section>
+
+<!-- ============ SECTION 6 — AI RENDER ============ -->
+<section class="section" id="airender">
+  <div class="section-head">
+    <div class="label-sm">Concept Visualization</div>
+    <h2>AI-Generated Architectural Render</h2>
+  </div>
+  <div class="render-cta">
+    <button class="btn-gold" id="renderBtn">Generate AI Concept Render</button>
+  </div>
+  <div class="render-stage" id="renderStage"></div>
+  <p class="render-note">In production, this module connects to a Stable Diffusion API pipeline via ControlNet, conditioned on the massing geometry above.</p>
+</section>
+
+<!-- ============ SECTION 7 — FOOTER ============ -->
+<footer>
+  <div class="f-line"></div>
+  <div class="f-brand">Tulum Country Club · By Bahía Príncipe Residences · Grupo Piñero</div>
+  <div class="f-conf">Confidential — For institutional investors only</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+/* =========================================================
+   DATA — the three institutional land positions
+========================================================= */
+const LOTS = [
+  {
+    id: 0,
+    code: "Mza 1 Lt 4",
+    name: "Lote 1",
+    area: 15213,
+    cos: 0.60,
+    cus: 2.40,
+    maxLevels: 4,
+    levelsLabel: "4",
+    height: "14m",
+    density: 80,
+    price: 6000000,
+    context: "Direct view to hole 14 of the PGA course. Largest land position in the portfolio."
+  },
+  {
+    id: 1,
+    code: "Mza 1 Lt 7",
+    name: "Lote 2",
+    area: 6897,
+    cos: 0.60,
+    cus: 1.60,
+    maxLevels: 3,
+    levelsLabel: "3 + Roof",
+    height: "12m",
+    density: 55,
+    price: 2700000,
+    context: "Borders hole 14, near the first access point from Playa del Carmen."
+  },
+  {
+    id: 2,
+    code: "Mza 52 Lt 1",
+    name: "Lote 3",
+    area: 6897,
+    cos: 0.60,
+    cus: 2.10,
+    maxLevels: 4,
+    levelsLabel: "4",
+    height: "14m",
+    density: null,
+    densityLabel: "To be confirmed",
+    price: 6000000,
+    context: "Fronts Casa Club with direct course access. Views to Maya jungle and Hotel Bahía Príncipe Sian Ka'an. Near the Tren Maya."
+  }
+];
+
+const fmt = n => n.toLocaleString('en-US', {maximumFractionDigits:0});
+const fmtMoney = n => '$' + n.toLocaleString('en-US', {maximumFractionDigits:0});
+
+let activeLotId = 0;
+
+/* =========================================================
+   RENDER — Lot selector cards
+========================================================= */
+const lotGrid = document.getElementById('lotGrid');
+
+function renderLotCards(){
+  lotGrid.innerHTML = LOTS.map(lot => `
+    <div class="lot-card ${lot.id === activeLotId ? 'active' : ''}" data-id="${lot.id}">
+      <div class="lot-index">${lot.code}</div>
+      <h3>${lot.name}</h3>
+      <div class="lot-sub">Tulum Country Club · PGA Riviera Maya</div>
+      <div class="lot-stats">
+        <div>
+          <span class="v">${fmt(lot.area)} m²</span>
+          <span class="l">Surface area</span>
+        </div>
+        <div>
+          <span class="v">${fmtMoney(lot.price)}</span>
+          <span class="l">Price (USD)</span>
+        </div>
+      </div>
+      <div class="lot-context">${lot.context}</div>
+    </div>
+  `).join('');
+
+  lotGrid.querySelectorAll('.lot-card').forEach(card => {
+    card.addEventListener('click', () => {
+      activeLotId = parseInt(card.dataset.id);
+      onLotChange();
+    });
+  });
+}
+
+/* =========================================================
+   RENDER — Parameters table
+========================================================= */
+const paramsTable = document.getElementById('paramsTable');
+const levelsSlider = document.getElementById('levelsSlider');
+const cusSlider = document.getElementById('cusSlider');
+const levelsVal = document.getElementById('levelsVal');
+const cusVal = document.getElementById('cusVal');
+
+function renderParamsTable(lot){
+  paramsTable.innerHTML = `
+    <div class="params-row"><span class="p-label">Lot identifier</span><span class="p-value plain">${lot.code}</span></div>
+    <div class="params-row"><span class="p-label">Surface area</span><span class="p-value">${fmt(lot.area)} m²</span></div>
+    <div class="params-row"><span class="p-label">COS — site coverage</span><span class="p-value">${(lot.cos*100).toFixed(0)}%</span></div>
+    <div class="params-row"><span class="p-label">CUS — floor area ratio</span><span class="p-value">${lot.cus.toFixed(2)}</span></div>
+    <div class="params-row"><span class="p-label">Maximum levels</span><span class="p-value">${lot.levelsLabel}</span></div>
+    <div class="params-row"><span class="p-label">Maximum height</span><span class="p-value">${lot.height}</span></div>
+    <div class="params-row"><span class="p-label">Authorized density</span><span class="p-value">${lot.density ? fmt(lot.density) + ' units' : lot.densityLabel}</span></div>
+    <div class="params-row"><span class="p-label">Asking price</span><span class="p-value">${fmtMoney(lot.price)}</span></div>
+  `;
+}
+
+/* =========================================================
+   CALCULATOR
+========================================================= */
+const calcGrid = document.getElementById('calcGrid');
+
+function computeMetrics(lot, levels, cusUtilPct){
+  const cusUtil = cusUtilPct / 100;
+  const totalBuildable = lot.area * lot.cus * cusUtil;
+  const footprint = lot.area * lot.cos;
+  const openArea = lot.area * (1 - lot.cos);
+  const estimatedUnits = lot.density ? lot.density * (levels / lot.maxLevels) : null;
+  const valuePerM2 = totalBuildable > 0 ? lot.price / totalBuildable : 0;
+
+  return { totalBuildable, footprint, openArea, estimatedUnits, valuePerM2 };
+}
+
+function renderCalculator(lot, levels, cusUtilPct){
+  const m = computeMetrics(lot, levels, cusUtilPct);
+
+  calcGrid.innerHTML = `
+    <div class="calc-card emphasis">
+      <div class="c-label">Total Buildable Area</div>
+      <div class="c-value">${fmt(m.totalBuildable)}<span class="c-unit">m²</span></div>
+    </div>
+    <div class="calc-card">
+      <div class="c-label">Ground Floor Footprint</div>
+      <div class="c-value">${fmt(m.footprint)}<span class="c-unit">m²</span></div>
+    </div>
+    <div class="calc-card">
+      <div class="c-label">Open / Green Area</div>
+      <div class="c-value">${fmt(m.openArea)}<span class="c-unit">m²</span></div>
+    </div>
+    <div class="calc-card emphasis">
+      <div class="c-label">Estimated Units</div>
+      <div class="c-value">${m.estimatedUnits !== null ? fmt(m.estimatedUnits) : '—'}</div>
+    </div>
+    <div class="calc-card emphasis">
+      <div class="c-label">Land Value per Buildable m²</div>
+      <div class="c-value">$${fmt(m.valuePerM2)}<span class="c-unit">/m²</span></div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   THREE.JS — Massing block visualization
+========================================================= */
+const canvas = document.getElementById('canvas3d');
+const viewerLotName = document.getElementById('viewerLotName');
+
+let scene, camera, renderer, controls, massingBlock, groundPlane;
+
+function initThree(){
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x111111);
+
+  const wrap = canvas.parentElement;
+  camera = new THREE.PerspectiveCamera(45, wrap.clientWidth / wrap.clientHeight, 0.1, 2000);
+  camera.position.set(140, 110, 160);
+
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 40;
+  controls.maxDistance = 500;
+  controls.maxPolarAngle = Math.PI / 2.1;
+
+  // lighting
+  const ambient = new THREE.AmbientLight(0xffffff, 0.55);
+  scene.add(ambient);
+  const dir = new THREE.DirectionalLight(0xffffff, 0.8);
+  dir.position.set(120, 200, 80);
+  scene.add(dir);
+  const fill = new THREE.DirectionalLight(0xC9A84C, 0.15);
+  fill.position.set(-100, 60, -100);
+  scene.add(fill);
+
+  // ground
+  const groundGeo = new THREE.PlaneGeometry(600, 600);
+  const groundMat = new THREE.MeshStandardMaterial({ color: 0x0a1a0a, roughness: 1 });
+  groundPlane = new THREE.Mesh(groundGeo, groundMat);
+  groundPlane.rotation.x = -Math.PI / 2;
+  scene.add(groundPlane);
+
+  // subtle grid
+  const grid = new THREE.GridHelper(600, 60, 0x1a2a1a, 0x142214);
+  grid.position.y = 0.1;
+  scene.add(grid);
+
+  // massing block
+  const geo = new THREE.BoxGeometry(1, 1, 1);
+  const mat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.7, metalness: 0.1 });
+  massingBlock = new THREE.Mesh(geo, mat);
+  scene.add(massingBlock);
+
+  // edge outline for definition
+  const edges = new THREE.EdgesGeometry(geo);
+  const edgeLines = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xC9A84C, opacity: 0.5, transparent: true }));
+  massingBlock.add(edgeLines);
+
+  window.addEventListener('resize', onResize);
+  animate();
+}
+
+function onResize(){
+  const wrap = canvas.parentElement;
+  camera.aspect = wrap.clientWidth / wrap.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+}
+
+function updateMassing(lot, levels, cusUtilPct){
+  const m = computeMetrics(lot, levels, cusUtilPct);
+  const footprintSide = Math.sqrt(m.footprint);
+
+  // scale footprint into a sane viewport size, keep proportional height
+  const SCALE = 0.6;
+  const width = footprintSide * SCALE;
+  const depth = footprintSide * SCALE * 0.82;
+  const levelHeight = 3.5 * SCALE * 4; // visually amplified per level
+  const heightVal = Math.max(levels * levelHeight, 6);
+
+  massingBlock.scale.set(width, heightVal, depth);
+  massingBlock.position.set(0, heightVal / 2, 0);
+
+  viewerLotName.textContent = `${lot.name} (${lot.code})`;
+}
+
+function animate(){
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+/* =========================================================
+   AI RENDER SIMULATION
+========================================================= */
+const renderBtn = document.getElementById('renderBtn');
+const renderStage = document.getElementById('renderStage');
+
+function runRenderSimulation(lot){
+  renderBtn.disabled = true;
+  const steps = [
+    'Analyzing site parameters...',
+    'Applying architectural style...',
+    'Rendering...'
+  ];
+  let i = 0;
+
+  renderStage.innerHTML = `
+    <div class="render-loading">
+      <div class="spinner"></div>
+      <span id="renderStepText">${steps[0]}</span>
+    </div>
+  `;
+
+  const stepText = document.getElementById('renderStepText');
+  const interval = setInterval(() => {
+    i++;
+    if (i < steps.length){
+      stepText.textContent = steps[i];
+    }
+  }, 1000);
+
+  setTimeout(() => {
+    clearInterval(interval);
+    renderStage.innerHTML = `
+      <div class="render-result">
+        <h3>Concept render — ${lot.name}</h3>
+        <p class="r-context">${lot.context}</p>
+        <span class="r-tag">Placeholder · ControlNet pipeline pending</span>
+      </div>
+    `;
+    renderBtn.disabled = false;
+  }, 3000);
+}
+
+renderBtn.addEventListener('click', () => {
+  const lot = LOTS.find(l => l.id === activeLotId);
+  runRenderSimulation(lot);
+});
+
+/* =========================================================
+   STATE ORCHESTRATION
+========================================================= */
+function onLotChange(){
+  const lot = LOTS.find(l => l.id === activeLotId);
+
+  levelsSlider.max = lot.maxLevels;
+  levelsSlider.value = lot.maxLevels;
+  levelsVal.textContent = lot.maxLevels;
+
+  cusSlider.value = 100;
+  cusVal.textContent = '100%';
+
+  renderLotCards();
+  renderParamsTable(lot);
+  renderCalculator(lot, lot.maxLevels, 100);
+  updateMassing(lot, lot.maxLevels, 100);
+
+  // reset render stage to its idle state on lot change
+  renderStage.innerHTML = '';
+}
+
+function onSlidersChange(){
+  const lot = LOTS.find(l => l.id === activeLotId);
+  const levels = parseInt(levelsSlider.value);
+  const cusUtilPct = parseInt(cusSlider.value);
+
+  levelsVal.textContent = lot.levelsLabel.includes('Roof') && levels === lot.maxLevels ? lot.levelsLabel : levels;
+  cusVal.textContent = cusUtilPct + '%';
+
+  renderCalculator(lot, levels, cusUtilPct);
+  updateMassing(lot, levels, cusUtilPct);
+}
+
+levelsSlider.addEventListener('input', onSlidersChange);
+cusSlider.addEventListener('input', onSlidersChange);
+
+/* =========================================================
+   INIT
+========================================================= */
+initThree();
+onLotChange();
+</script>
+</body>
+</html>
