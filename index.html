@@ -348,6 +348,13 @@
     color:var(--text-dim);
   }
   .viewer-tag .gold{color:var(--gold);}
+  .viewer-dims{
+    position:absolute;
+    top:48px; left:28px;
+    font-size:11px;
+    letter-spacing:0.04em;
+    color:var(--text-dim);
+  }
   .viewer-hint{
     position:absolute;
     bottom:24px; left:28px;
@@ -558,6 +565,7 @@
   </div>
   <div class="viewer-wrap">
     <div class="viewer-tag">Massing block · <span class="gold" id="viewerLotName">—</span></div>
+    <div class="viewer-dims" id="viewerDims">—</div>
     <div class="viewer-hint">Drag to orbit</div>
     <canvas id="canvas3d"></canvas>
   </div>
@@ -743,8 +751,88 @@ function renderCalculator(lot, levels, cusUtilPct){
 ========================================================= */
 const canvas = document.getElementById('canvas3d');
 const viewerLotName = document.getElementById('viewerLotName');
+const viewerDims = document.getElementById('viewerDims');
 
-let scene, camera, renderer, controls, massingBlock, groundPlane;
+let scene, camera, renderer, controls, massingBlock, groundPlane, floorLines;
+
+function makeTree(x, z, scale){
+  const group = new THREE.Group();
+  const trunk = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.35 * scale, 0.5 * scale, 3 * scale, 6),
+    new THREE.MeshStandardMaterial({ color: 0x1b1f15, roughness: 1 })
+  );
+  trunk.position.y = 1.5 * scale;
+  const canopy = new THREE.Mesh(
+    new THREE.ConeGeometry(2.1 * scale, 4 * scale, 7),
+    new THREE.MeshStandardMaterial({ color: 0x152a18, roughness: 1 })
+  );
+  canopy.position.y = 4.4 * scale;
+  group.add(trunk, canopy);
+  group.position.set(x, 0, z);
+  return group;
+}
+
+function makeContextBuilding(x, z, w, h, d, rotY){
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(w, h, d),
+    new THREE.MeshStandardMaterial({ color: 0x1c1c1c, roughness: 1, transparent: true, opacity: 0.65 })
+  );
+  mesh.position.set(x, h / 2, z);
+  mesh.rotation.y = rotY;
+  return mesh;
+}
+
+// approximate, illustrative site context inferred from the Tulum Country Club master
+// plan (Park Village sits within the golf course, near a lagoon, with low-rise
+// residential clusters nearby) — not surveyed geometry, just spatial orientation
+function buildSiteContext(){
+  const group = new THREE.Group();
+
+  // fairway patches — lighter desaturated green bands against the base ground,
+  // soft-edged (opacity) so they read as terrain variation, not flat cutouts
+  const fairwayMat = new THREE.MeshStandardMaterial({ color: 0x1f4526, roughness: 1, transparent: true, opacity: 0.55 });
+  [
+    [-130, -70, 150, 70, 0.35], [-90, -130, 90, 50, 0.1],
+    [110, 90, 170, 60, -0.5], [150, 40, 90, 45, -0.8],
+    [-60, 150, 120, 55, 0.9], [-20, 190, 80, 40, 1.1],
+  ].forEach(([x, z, w, d, rot]) => {
+    const patch = new THREE.Mesh(new THREE.PlaneGeometry(w, d), fairwayMat);
+    patch.rotation.x = -Math.PI / 2;
+    patch.rotation.z = rot;
+    patch.position.set(x, 0.03, z);
+    group.add(patch);
+  });
+
+  // lagoon
+  const pond = new THREE.Mesh(
+    new THREE.CircleGeometry(34, 40),
+    new THREE.MeshStandardMaterial({ color: 0x0b2530, roughness: 0.25, metalness: 0.25 })
+  );
+  pond.rotation.x = -Math.PI / 2;
+  pond.position.set(-150, 0.05, 40);
+  group.add(pond);
+
+  // tree clusters (jungle buffer at the perimeter)
+  const treeSpots = [
+    [-180, -140], [-160, -180], [-200, -90], [-140, -200],
+    [180, 130], [210, 90], [160, 170], [220, 40],
+    [60, -190], [110, -210], [-30, -220],
+    [-190, 160], [-220, 110],
+  ];
+  treeSpots.forEach(([x, z]) => group.add(makeTree(x, z, 1 + Math.random() * 0.6)));
+
+  // neighboring low-rise residential clusters (generic massing, illustrative only)
+  [
+    [-90, -120, 22, 9, 16, 0.3],
+    [-60, -150, 16, 7, 14, -0.2],
+    [130, -60, 20, 12, 18, 0.6],
+    [150, 60, 14, 8, 14, -0.4],
+    [-150, -40, 18, 10, 16, 0.15],
+    [90, 150, 24, 14, 20, -0.6],
+  ].forEach(([x, z, w, h, d, rot]) => group.add(makeContextBuilding(x, z, w, h, d, rot)));
+
+  scene.add(group);
+}
 
 function initThree(){
   scene = new THREE.Scene();
@@ -790,6 +878,11 @@ function initThree(){
   grid.position.y = 0.1;
   scene.add(grid);
 
+  // site context — Park Village sits inside the Tulum Country Club golf course,
+  // with neighboring residential clusters nearby (per the master plan); kept dark/
+  // desaturated so it reads as background, not the subject of the visualization
+  buildSiteContext();
+
   // massing block
   const geo = new THREE.BoxGeometry(1, 1, 1);
   const mat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.7, metalness: 0.1 });
@@ -800,6 +893,9 @@ function initThree(){
   const edges = new THREE.EdgesGeometry(geo);
   const edgeLines = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xC9A84C, opacity: 0.5, transparent: true }));
   massingBlock.add(edgeLines);
+
+  floorLines = new THREE.Group();
+  massingBlock.add(floorLines);
 
   window.addEventListener('resize', onResize);
   animate();
@@ -821,17 +917,33 @@ function updateMassing(lot, levels, cusUtilPct){
   const visualFootprint = m.footprint * (cusUtilPct / 100);
   const footprintSide = Math.sqrt(visualFootprint);
 
-  // scale footprint into a sane viewport size, keep proportional height
+  // true-to-scale: 1 real meter = SCALE scene units, on both footprint and height,
+  // so the block reads as an actual low-rise volume instead of an oversized cube
   const SCALE = 0.6;
+  const floorHeightReal = parseFloat(lot.height) / lot.maxLevels; // meters/level, from official max height
+  const heightReal = levels * floorHeightReal;
+
   const width = footprintSide * SCALE;
   const depth = footprintSide * SCALE * 0.82;
-  const levelHeight = 3.5 * SCALE * 4; // visually amplified per level
-  const heightVal = Math.max(levels * levelHeight, 6);
+  const heightVal = Math.max(heightReal * SCALE, 4);
 
   massingBlock.scale.set(width, heightVal, depth);
   massingBlock.position.set(0, heightVal / 2, 0);
 
+  // floor-divider lines so the volume reads as a multi-level building, not a solid slab
+  floorLines.clear();
+  const floorMat = new THREE.LineBasicMaterial({ color: 0x6a6a6a });
+  for (let i = 1; i < levels; i++){
+    const y = -0.5 + i / levels;
+    const pts = [
+      [-0.5, y, -0.5], [0.5, y, -0.5], [0.5, y, -0.5], [0.5, y, 0.5],
+      [0.5, y, 0.5], [-0.5, y, 0.5], [-0.5, y, 0.5], [-0.5, y, -0.5],
+    ].map(p => new THREE.Vector3(...p));
+    floorLines.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), floorMat));
+  }
+
   viewerLotName.textContent = `${lot.name} (${lot.code})`;
+  viewerDims.textContent = `Footprint ≈ ${Math.round(visualFootprint).toLocaleString()} m² · Height ≈ ${heightReal.toFixed(1)} m (${levels} level${levels > 1 ? 's' : ''})`;
 }
 
 function animate(){
