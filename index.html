@@ -331,6 +331,36 @@
     margin-left:6px;
   }
 
+  /* ---------- CONFIG SELECTOR ---------- */
+  .config-row{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    margin-bottom:24px;
+    flex-wrap:wrap;
+  }
+  .config-label{
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    white-space:nowrap;
+  }
+  .config-btns{display:flex; gap:8px; flex-wrap:wrap;}
+  .cfg-btn{
+    padding:8px 16px;
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    font-family:'Inter',sans-serif;
+    font-size:12px;
+    letter-spacing:0.06em;
+    cursor:pointer;
+    transition:border-color .2s, color .2s;
+  }
+  .cfg-btn:hover{ border-color:#555; color:var(--text); }
+  .cfg-btn.active{ border-color:var(--gold); color:var(--gold); }
+
   /* ---------- 3D VIEWER ---------- */
   .viewer-wrap{
     position:relative;
@@ -563,8 +593,17 @@
     <div class="label-sm">Massing Study</div>
     <h2>3D Volume Visualization</h2>
   </div>
+  <div class="config-row">
+    <span class="config-label">Building configuration</span>
+    <div class="config-btns" id="configBtns">
+      <button class="cfg-btn active" data-cfg="single">Volume único</button>
+      <button class="cfg-btn" data-cfg="dual">2 torres</button>
+      <button class="cfg-btn" data-cfg="tower-low">Torre + residencial</button>
+      <button class="cfg-btn" data-cfg="triple">1 alto + 2 bajas</button>
+    </div>
+  </div>
   <div class="viewer-wrap">
-    <div class="viewer-tag">Massing block · <span class="gold" id="viewerLotName">—</span></div>
+    <div class="viewer-tag">Massing study · <span class="gold" id="viewerLotName">—</span></div>
     <div class="viewer-dims" id="viewerDims">—</div>
     <div class="viewer-hint">Drag to orbit</div>
     <canvas id="canvas3d"></canvas>
@@ -753,7 +792,16 @@ const canvas = document.getElementById('canvas3d');
 const viewerLotName = document.getElementById('viewerLotName');
 const viewerDims = document.getElementById('viewerDims');
 
-let scene, camera, renderer, controls, massingBlock, groundPlane, floorLines;
+let scene, camera, renderer, controls, groundPlane;
+let massingVolumes = []; // array of THREE.Mesh, one per sub-volume in current config
+
+const CONFIGS = {
+  'single':    { volumes: [{ frac:1.0, hRatio:1.0 }] },
+  'dual':      { volumes: [{ frac:0.5, hRatio:1.2 }, { frac:0.5, hRatio:1.0 }] },
+  'tower-low': { volumes: [{ frac:0.28, hRatio:2.0 }, { frac:0.72, hRatio:0.55 }] },
+  'triple':    { volumes: [{ frac:0.42, hRatio:1.7 }, { frac:0.29, hRatio:0.75 }, { frac:0.29, hRatio:0.75 }] },
+};
+let activeConfig = 'single';
 
 function makeTree(x, z, scale){
   const group = new THREE.Group();
@@ -883,20 +931,6 @@ function initThree(){
   // desaturated so it reads as background, not the subject of the visualization
   buildSiteContext();
 
-  // massing block
-  const geo = new THREE.BoxGeometry(1, 1, 1);
-  const mat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.7, metalness: 0.1 });
-  massingBlock = new THREE.Mesh(geo, mat);
-  scene.add(massingBlock);
-
-  // edge outline for definition
-  const edges = new THREE.EdgesGeometry(geo);
-  const edgeLines = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xC9A84C, opacity: 0.5, transparent: true }));
-  massingBlock.add(edgeLines);
-
-  floorLines = new THREE.Group();
-  massingBlock.add(floorLines);
-
   window.addEventListener('resize', onResize);
   animate();
 }
@@ -908,42 +942,73 @@ function onResize(){
   renderer.setSize(wrap.clientWidth, wrap.clientHeight);
 }
 
-function updateMassing(lot, levels, cusUtilPct){
-  if (!massingBlock) return; // 3D viewer didn't initialize (e.g. CDN unreachable)
+function makeVolumeBlock(w, h, d, x, z, levels){
+  const geo = new THREE.BoxGeometry(1, 1, 1);
+  const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.7, metalness: 0.1 }));
+  mesh.scale.set(w, h, d);
+  mesh.position.set(x, h / 2, z);
 
-  const m = computeMetrics(lot, levels, cusUtilPct);
-  // footprint stat itself is fixed by COS; CUS utilization is visualized as how
-  // much of that footprint is actually built out, so both sliders move the block
-  const visualFootprint = m.footprint * (cusUtilPct / 100);
-  const footprintSide = Math.sqrt(visualFootprint);
+  // gold edge outline
+  const edges = new THREE.EdgesGeometry(geo);
+  mesh.add(new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xC9A84C, opacity: 0.6, transparent: true })));
 
-  // true-to-scale: 1 real meter = SCALE scene units, on both footprint and height,
-  // so the block reads as an actual low-rise volume instead of an oversized cube
-  const SCALE = 0.6;
-  const floorHeightReal = parseFloat(lot.height) / lot.maxLevels; // meters/level, from official max height
-  const heightReal = levels * floorHeightReal;
-
-  const width = footprintSide * SCALE;
-  const depth = footprintSide * SCALE * 0.82;
-  const heightVal = Math.max(heightReal * SCALE, 4);
-
-  massingBlock.scale.set(width, heightVal, depth);
-  massingBlock.position.set(0, heightVal / 2, 0);
-
-  // floor-divider lines so the volume reads as a multi-level building, not a solid slab
-  floorLines.clear();
-  const floorMat = new THREE.LineBasicMaterial({ color: 0x6a6a6a });
+  // floor-divider lines
+  const floorMat = new THREE.LineBasicMaterial({ color: 0x606060 });
   for (let i = 1; i < levels; i++){
     const y = -0.5 + i / levels;
     const pts = [
-      [-0.5, y, -0.5], [0.5, y, -0.5], [0.5, y, -0.5], [0.5, y, 0.5],
-      [0.5, y, 0.5], [-0.5, y, 0.5], [-0.5, y, 0.5], [-0.5, y, -0.5],
+      [-0.5,y,-0.5],[0.5,y,-0.5], [0.5,y,-0.5],[0.5,y,0.5],
+      [0.5,y,0.5],[-0.5,y,0.5], [-0.5,y,0.5],[-0.5,y,-0.5],
     ].map(p => new THREE.Vector3(...p));
-    floorLines.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), floorMat));
+    mesh.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), floorMat));
   }
+  return mesh;
+}
 
+function updateMassing(lot, levels, cusUtilPct){
+  if (!scene) return; // 3D viewer didn't initialize (e.g. CDN unreachable)
+
+  // remove previous volumes
+  massingVolumes.forEach(m => scene.remove(m));
+  massingVolumes = [];
+
+  const m = computeMetrics(lot, levels, cusUtilPct);
+  const visualFootprint = m.footprint * (cusUtilPct / 100);
+
+  // true-to-scale: 1 real meter = SCALE scene units for both footprint and height
+  const SCALE = 0.6;
+  const floorHeightReal = parseFloat(lot.height) / lot.maxLevels;
+  const baseHeightReal = levels * floorHeightReal;
+  const baseHeightVal = Math.max(baseHeightReal * SCALE, 3);
+
+  const cfg = CONFIGS[activeConfig].volumes;
+  const GAP = 4; // scene-unit gap between sub-volumes
+
+  // compute each sub-volume's dimensions
+  const vols = cfg.map(({ frac, hRatio }) => {
+    const side = Math.sqrt(visualFootprint * frac);
+    return {
+      w: side * SCALE,
+      d: side * SCALE * 0.82,
+      h: Math.max(baseHeightVal * hRatio, 2),
+      levels: Math.max(1, Math.round(levels * hRatio)),
+    };
+  });
+
+  // lay out volumes in a row centered at origin (X axis)
+  const totalW = vols.reduce((s, v) => s + v.w, 0) + GAP * (vols.length - 1);
+  let cursor = -totalW / 2;
+  vols.forEach(v => {
+    const x = cursor + v.w / 2;
+    cursor += v.w + GAP;
+    const mesh = makeVolumeBlock(v.w, v.h, v.d, x, 0, v.levels);
+    scene.add(mesh);
+    massingVolumes.push(mesh);
+  });
+
+  const cfgLabels = { single:'Volume único', dual:'2 torres', 'tower-low':'Torre + residencial', triple:'1 alto + 2 bajas' };
   viewerLotName.textContent = `${lot.name} (${lot.code})`;
-  viewerDims.textContent = `Footprint ≈ ${Math.round(visualFootprint).toLocaleString()} m² · Height ≈ ${heightReal.toFixed(1)} m (${levels} level${levels > 1 ? 's' : ''})`;
+  viewerDims.textContent = `${cfgLabels[activeConfig]} · Footprint ≈ ${Math.round(visualFootprint).toLocaleString()} m² · Altura base ≈ ${baseHeightReal.toFixed(1)} m (${levels} nivel${levels>1?'es':''})`;
 }
 
 function animate(){
@@ -1036,6 +1101,15 @@ function onSlidersChange(){
 
 levelsSlider.addEventListener('input', onSlidersChange);
 cusSlider.addEventListener('input', onSlidersChange);
+
+document.getElementById('configBtns').addEventListener('click', e => {
+  const btn = e.target.closest('.cfg-btn');
+  if (!btn) return;
+  document.querySelectorAll('.cfg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeConfig = btn.dataset.cfg;
+  onSlidersChange();
+});
 
 /* =========================================================
    INIT
